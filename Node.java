@@ -1,11 +1,11 @@
 public class Node {
 
     private boolean isWord;
-    private char[] next;
+    private Node[] children;
 
     public Node() {
         isWord = false;
-        next = new char[26];
+        children = new Node[26];
     }
 
     public boolean isWord() {
@@ -13,9 +13,9 @@ public class Node {
     }
 
     // We probably should throw or catch an exception here.
-    public char next(char ch) {
+    public Node child(char ch) {
         int index = (int) ch - (int) 'a';
-        return next[index];
+        return children[index];
     }
 
     public void setTrue() {
