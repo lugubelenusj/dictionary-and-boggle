@@ -8,14 +8,24 @@ public class Node {
         children = new Node[26];
     }
 
+    public Node(boolean isTrue) {
+        isWord = isTrue;
+        children = new Node[26];
+    }
+
     public boolean isWord() {
         return isWord;
     }
 
     // We probably should throw or catch an exception here.
-    public Node child(char ch) {
+    public Node getChild(char ch) {
         int index = (int) ch - (int) 'a';
         return children[index];
+    }
+
+    public void setChild(char ch, Node node) {
+        int index = (int) ch - (int) 'a';
+        children[index] = node;
     }
 
     public void setTrue() {
@@ -26,6 +36,8 @@ public class Node {
         isWord = false;
     }
 
-
+    public boolean isEnd() {
+        return isWord;
+    }
 
 }

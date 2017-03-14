@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 
 public class Dictionary {
 
+    public static final char[] ALPHABET = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
     // Have to rename this or the parameters.
     private Node root;
 
@@ -40,8 +42,27 @@ public class Dictionary {
      *      the word to add to the dictionary
      */
     public void add(String word) {
-        root = add(word, root);
-        // Make sure to set the last node to true.
+        if (word.length() <= 0) {
+            System.err.println("add(): Do not enter an empty string.");
+        }
+        else {
+            add(word, root);
+        }
+    }
+
+    private void add(String word, Node tree) {
+        char first = word.charAt(0);
+
+        if (word.length() == 1) {
+            tree.setChild(first, new Node(true));
+        }
+
+        else {
+            if (tree.getChild(first) == null) {
+                tree.setChild(first, new Node());
+            }
+            add(word.substring(1), tree.getChild(first));
+        }
     }
 
     /**
@@ -53,7 +74,25 @@ public class Dictionary {
      *      true if word is in dictionary
      */
     public boolean check(String word) {
+        return check(word, root);
+    }
 
+    private boolean check(String word, Node tree) {
+        if (word.length() == 0 || tree == null) {
+            return false;
+        }
+        else if (word.length() == 1) {
+            if (tree.getChild(word.charAt(0)) != null) {
+                if (tree.getChild(word.charAt(0)).isEnd()) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        else {
+            return check(word.substring(1), tree.getChild(word.charAt(0)));
+        }
     }
 
     /**
@@ -66,7 +105,22 @@ public class Dictionary {
      *      the dictionary.
      */
     public boolean checkPrefix(String prefix) {
+        return checkPrefix(prefix, root);
+    }
 
+    private boolean checkPrefix(String prefix, Node tree) {
+        if (prefix.length() == 0 || tree == null) {
+            return false;
+        }
+        else if (prefix.length() == 1) {
+            if (tree.getChild(prefix.charAt(0)) != null) {
+                return true;
+            }
+            return false;
+        }
+        else {
+            return checkPrefix(prefix.substring(1), tree.getChild(prefix.charAt(0)));
+        }
     }
 
     /**
@@ -74,7 +128,23 @@ public class Dictionary {
      * alphabetical order, one word per line.
      */
     public void print() {
+        print("", root);
+    }
 
+    private void print(String word, Node node) {
+        if (node != null) {
+
+            if (node.isEnd()) {
+                System.out.println(word);
+            }
+
+            String temp;
+            for (char ch : ALPHABET) {
+                temp = word;
+                temp += ch;
+                print(temp, node.getChild(ch));
+            }
+        }
     }
 
     /**
@@ -96,36 +166,7 @@ public class Dictionary {
      *      string in the dictionary
      */
     public String suggest(String word) {
-
-    }
-
-    private Node add(String word, Node root) {
-        if (word ==  null) {
-
-        }
-
-        // Should mean we've reached end of subtree.'
-        if (root == null) {
-            Node current = root;
-            // Can't do current.next, cuz current is null.
-            for (char ch : word) {
-
-            }
-        }
-
-        else {
-            char first = word.charAt(0);
-            add(word.substring(1), root.child(first));
-        }
-    }
-
-    private Node print(Node root) {
-        if (root == null) {
-
-        }
-        else {
-            System.out.println(root.)
-        }
+        return "";
     }
 
 }
