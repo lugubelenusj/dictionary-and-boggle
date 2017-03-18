@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
@@ -81,12 +82,59 @@ public class Board
       * @param guess The guess to check
       * @return Returns true if the guess is valid
       */
-     public boolean validGuess(String guess)
-     {
-	 // Fill me in!!
+    public boolean validGuess(String guess) {
+        if ((guess.length() >= 3) && dict.check(guess)) {
+            resetVisited();
+            for (int x = 0; x < BOARD_WIDTH; x++) {
+                for (int y = 0; y < BOARD_HEIGHT; y++) {
+                    if (wordSearch(guess, "", x, y)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-         return false; 
+    private boolean wordSearch(String guess, String str, int x, int y) {
+        str += (board[x][y]).getTop();
+        visited[x][y] = true;
+
+        if (guess.equalsIgnoreCase(str)) {
+            return true;
+        }
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (validLocation(x+i, y+j) && wordSearch(guess, str, x+i, y+j)) {
+                    return true;
+                }
+            }
+        }
+
+        str = str.substring(0, str.length()-1);
+        visited[x][y] = false;
+
+        return false;
+
      }
+
+    private boolean validLocation(int x, int y) {
+        return ((x >= 0) && 
+        (y >= 0) && 
+        (x < BOARD_WIDTH) && 
+        (y < BOARD_HEIGHT) &&
+        !visited[x][y]);
+    }
+
+    private void resetVisited() {
+        visited = new boolean[BOARD_WIDTH][BOARD_HEIGHT];
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            for (int y = 0; y < BOARD_HEIGHT; y++) {
+                visited[x][y] = false;
+            }
+        }
+    }
 
      /**
       * Check a string of player moves, to see which ones are legal.  Returns the score
@@ -138,13 +186,53 @@ public class Board
       * @return The score for the computer -- 1 point for each 3-letter word, 2 points for each 4 letter
       * word, 3 points for each 5 letter word, and so on. 
       */
-     public int computerMove(Set<String> playerMove, Set<String> computerMove)
-     {
+    public int computerMove(Set<String> playerMove, Set<String> computerMove)
+    {
+        resetVisited();
+        HashSet<String> found = new HashSet<>();
 
-	 // Fill me in!!
-	 // You will also need some helper methods ...
+        // Finds all valid words on the board.
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            for (int y = 0; y < BOARD_HEIGHT; y++) {
+                findAllWords(found, "", x, y);
+            }
+        }
 
-	 return 0;  // Just here so that the file compiles
-     }
+        // Adds words not in playerMove to computerMove.
+        for (String word : found) {
+            if (!playerMove.contains(word)) {
+                computerMove.add(word);
+            }
+        }
+
+        // Calculates score for the computer.
+        int score = 0;
+        for (String word : computerMove) {
+            score += word.length() - 2;
+        }
+
+        return score;
+    }
+
+    private void findAllWords(Set<String> found, String str, int x, int y) {
+        visited[x][y] = true;
+        // Need to make lower case, because all char in dictionary is lower case.
+        str += Character.toLowerCase((board[x][y]).getTop());
+
+        if ((str.length() >= 3) && dict.check(str)) {
+            found.add(str);
+        }
+
+        for (int i = -1; i <=1; i++) {
+            for (int j = -1; j <=1; j++) {
+                if (validLocation(x+i, y+j)) {
+                    findAllWords(found, str, x+i, y+j);
+                }
+            }
+        }
+
+        str = str.substring(0, str.length()-1);
+        visited[x][y] = false;
+    }
 
 }

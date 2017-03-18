@@ -154,7 +154,20 @@ public class Dictionary {
      *      the word to remove
      */
     public void remove(String word) {
-
+        if (check(word)) {
+            remove(word, root);
+        }
+        else {
+            System.err.println("remove(): Word is not in dictionary.");
+        }
+    }
+    private void remove(String word, Node tree) {
+        if (word.length() == 1) {
+            tree.getChild(word.charAt(0)).setFalse();
+        }
+        else {
+            remove(word.substring(1), tree.getChild(word.charAt(0)));
+        }
     }
 
     /**
@@ -166,7 +179,24 @@ public class Dictionary {
      *      string in the dictionary
      */
     public String suggest(String word) {
-        return "";
+        return suggest(word, "", root);
+    }
+
+    private String suggest(String word, String suggested, Node tree) {
+        if (word.length() == 0) {
+            for (char ch : ALPHABET) {
+                while (tree != null) {
+                    char last = suggested.charAt(suggested.length() - 1);
+                    if ((tree.getChild(last)) != null && (tree.getChild(last).isEnd())) {
+                        return suggested += ch;
+                    }
+                }
+            }
+        }
+        else {
+            suggest(word.substring(1), (suggested += word.charAt(0)), tree.getChild(word.charAt(0)));
+        }
+        return "hi";
     }
 
 }

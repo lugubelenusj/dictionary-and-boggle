@@ -19,11 +19,13 @@ public class Node {
 
     // We probably should throw or catch an exception here.
     public Node getChild(char ch) {
+        ch = Character.toLowerCase(ch);
         int index = (int) ch - (int) 'a';
         return children[index];
     }
 
     public void setChild(char ch, Node node) {
+        ch = Character.toLowerCase(ch);
         int index = (int) ch - (int) 'a';
         children[index] = node;
     }
@@ -39,5 +41,7 @@ public class Node {
     public boolean isEnd() {
         return isWord;
     }
+
+
 
 }
