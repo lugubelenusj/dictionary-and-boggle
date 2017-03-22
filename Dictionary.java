@@ -46,7 +46,7 @@ public class Dictionary {
             System.err.println("add(): Do not enter an empty string.");
         }
         else {
-            add(word, root);
+            add(word.toLowerCase(), root);
         }
     }
 
@@ -74,7 +74,7 @@ public class Dictionary {
      *      true if word is in dictionary
      */
     public boolean check(String word) {
-        return check(word, root);
+        return check(word.toLowerCase(), root);
     }
 
     private boolean check(String word, Node tree) {
@@ -105,12 +105,15 @@ public class Dictionary {
      *      the dictionary.
      */
     public boolean checkPrefix(String prefix) {
-        return checkPrefix(prefix, root);
+        return checkPrefix(prefix.toLowerCase(), root);
     }
 
     private boolean checkPrefix(String prefix, Node tree) {
-        if (prefix.length() == 0 || tree == null) {
+        if (tree == null) {
             return false;
+        }
+        if (prefix.length() == 0) {
+        	return true;
         }
         else if (prefix.length() == 1) {
             if (tree.getChild(prefix.charAt(0)) != null) {
@@ -155,18 +158,31 @@ public class Dictionary {
      */
     public void remove(String word) {
         if (check(word)) {
-            remove(word, root);
+            remove(word.toLowerCase(), root);
         }
         else {
             System.err.println("remove(): Word is not in dictionary.");
         }
     }
+
     private void remove(String word, Node tree) {
         if (word.length() == 1) {
             tree.getChild(word.charAt(0)).setFalse();
+            prune(tree.getChild(word.charAt(0)));
         }
         else {
             remove(word.substring(1), tree.getChild(word.charAt(0)));
+            prune(tree.getChild(word.charAt(0)));
+        }
+    }
+
+    private void prune(Node node) {
+        for (char ch : ALPHABET) {
+            if (node.getChild(ch) != null) {
+                if (node.getChild(ch).isLeaf() && !node.getChild(ch).isEnd()) {
+                    node.makeChildNull(ch);
+                }
+            }
         }
     }
 
@@ -179,24 +195,43 @@ public class Dictionary {
      *      string in the dictionary
      */
     public String suggest(String word) {
-        return suggest(word, "", root);
+        if (check(word)) {
+            return word;
+        }
+        return suggest(word.toLowerCase(), "", root);
     }
 
     private String suggest(String word, String suggested, Node tree) {
-        if (word.length() == 0) {
-            for (char ch : ALPHABET) {
-                while (tree != null) {
-                    char last = suggested.charAt(suggested.length() - 1);
-                    if ((tree.getChild(last)) != null && (tree.getChild(last).isEnd())) {
-                        return suggested += ch;
-                    }
+        suggested += word.charAt(0);
+
+        if (tree.getChild(word.charAt(0)) == null) {
+            return findTrue(suggested, tree);
+        }
+        else if (word.length() == 1) {
+            if (tree.getChild(word.charAt(0)) != null) {
+                return findTrue(suggested, tree.getChild(word.charAt(0)));
+            }
+        }
+
+        return suggest(word.substring(1), suggested, tree.getChild(word.charAt(0)));
+    }
+    
+    private String findTrue(String suggested, Node tree) {
+        String temp = suggested;
+
+        for (char ch : ALPHABET) {
+            if (tree.getChild(ch) != null) {
+                temp += ch;
+                if (tree.getChild(ch).isEnd()) {
+                    return temp;
+                }
+                else {
+                    return findTrue(temp, tree.getChild(ch));
                 }
             }
         }
-        else {
-            suggest(word.substring(1), (suggested += word.charAt(0)), tree.getChild(word.charAt(0)));
-        }
-        return "hi";
+
+        return "";
     }
 
 }

@@ -8,7 +8,7 @@ public class DictionaryTest
 
         boolean success = true;
         success =  smallTest() && success;
-        success =  testWordFile("words") && success;
+        success =  testWordFile("words.txt") && success;
 
         printSuccess(success, "All Tests");
 

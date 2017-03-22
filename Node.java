@@ -41,7 +41,21 @@ public class Node {
     public boolean isEnd() {
         return isWord;
     }
+    
+    public boolean isLeaf() {
+        for (int i = 0; i < children.length; i++) {
+            if (children[i] != null) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    public void makeChildNull(char ch) {
+        ch = Character.toLowerCase(ch);
+        int index = (int) ch - (int) 'a';
+        children[index] = null;
+    }
 
 
 }
