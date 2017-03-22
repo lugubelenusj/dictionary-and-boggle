@@ -198,24 +198,16 @@ public class Dictionary {
         if (check(word)) {
             return word;
         }
-        return suggest(word.toLowerCase(), "", root);
-    }
-
-    private String suggest(String word, String suggested, Node tree) {
-        suggested += word.charAt(0);
-
-        if (tree.getChild(word.charAt(0)) == null) {
-            return findTrue(suggested, tree);
-        }
-        else if (word.length() == 1) {
-            if (tree.getChild(word.charAt(0)) != null) {
-                return findTrue(suggested, tree.getChild(word.charAt(0)));
+        else if (checkPrefix(word)) {
+            Node tree = root;
+            for (char ch : word.toCharArray()) {
+                tree = tree.getChild(ch);
             }
+            return findTrue(word, tree);
         }
-
-        return suggest(word.substring(1), suggested, tree.getChild(word.charAt(0)));
+        return suggest(word.substring(0, word.length() -1));
     }
-    
+
     private String findTrue(String suggested, Node tree) {
         String temp = suggested;
 

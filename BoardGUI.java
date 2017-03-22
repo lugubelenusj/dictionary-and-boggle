@@ -209,7 +209,7 @@ public class BoardGUI extends JPanel
     public static void main(String args[]) throws IOException
     {
         JFrame frame = new JFrame("Boggle");
-        Dictionary dict = new Dictionary("words");//("words_ospd.txt");
+        Dictionary dict = new Dictionary("words.txt");//("words_ospd.txt");
         Board b = new Board("dice.txt", dict);
         frame.add(new BoardGUI(b));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
